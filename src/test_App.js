@@ -1,6 +1,14 @@
 import './App.css';
 import {useEffect, useState} from "react";
-import {auth, loginGoogle, loginGuest, renameUser, persistenceSet, addScore, addUser} from "./firebase.js";
+import {
+    auth,
+    loginGoogle,
+    loginGuest,
+    renameUser,
+    persistenceSet,
+    addScore,
+    addUser,
+} from "./firebase.js";
 
 
 function App() {
@@ -8,54 +16,58 @@ function App() {
     const [user, setUser] = useState(null);
     const [score, setScore] = useState(0);
     const [scores, setScores] = useState([]);
+    //const movies = null;
 
+    //Will remove a part after testing
     //At the end of a game, append a score result to userData DB's scores array.
     const addScoreHistory = (e, score) => {
         e.preventDefault();
-        // use to get current time in KST. (kr_curr)
-        // const curr = new Date();
-        // const utc = curr.getTime() + (curr.getTimezoneOffset()*60*1000);
-        // const kr_curr = new Date(utc+9*60*60*1000);
-        addScore(user.uid,user.displayName, score).then(result =>
+        addScore(user.uid, score).then(result =>
             {
+                // this is for test_App!
                 setScores((prevState) => [...prevState, score]);
             }
         ).catch(err => console.log(err))
     }
 
     //Pop-up Google Login when clicking on 'Login with Google'
-    const googleLogin = (e) => {
+    const googleLogin = async (e) => {
         e.preventDefault();
-        loginGoogle().then(result => {
+        await persistenceSet();
+        await loginGoogle().then(result => {
             const userInfo = result.user;
             addUser(userInfo.uid, userInfo.email).catch(err => console.log(err));
         }).catch(error => console.log(error))
     }
 
-    //Changeable - Anonymous Login when clicking on 'Play without Login'
-    const guestLogin = (e) => {
+    //Under Construction - must decide whether use anonymous login or no login for guests.
+    //Anonymous Login when clicking on 'Play without Login'
+    const guestLogin = async (e) => {
         e.preventDefault();
-        loginGuest().then((result) => {
+        await persistenceSet();
+        await loginGuest().then((result) => {
         }).catch(error => console.log(error));
     }
 
-    //Currently Testing...
+    /*
+    //used for making movieData. set movies variable with array.
+    const makeMovieData = () => {
+        movies.forEach((value, index) => addMovie(String(index),value[0]))
+    }
+    */
+
+    //Under construction - Don't know if condition is correct for this, will check.
     //Whenever auth state is changed(login/logout), set user value to current user.
     //If its display name is null or user is anonymous, update user's display name to 'Guest' and do setUser.
     const onAuthStateChanged = () => {
         const currentUser = auth.currentUser;
+        // this part
         if ( currentUser && (!currentUser.displayName || currentUser.isAnonymous)){
             renameUser('Guest').then(e => {setUser(currentUser);})
         } else {
             setUser(currentUser);
         }
     }
-
-    // ** ToDo - move this part to persistenceSet() right before login
-    //When page is loaded, account persistence option will be set.
-    useEffect( () => {
-        persistenceSet();
-    }, [])
 
     //Whenever auth state is changed, onAuthStateChanged will execute once.
     useEffect(() => {
@@ -76,6 +88,7 @@ function App() {
         </div>
         <button onClick={e => googleLogin(e)}>Sign In with Google</button>
         <button onClick={e => guestLogin(e)}>Play without Login</button>
+        <button>Button for another function test</button>
         <div id="scores">
             {scores.map((score,index) => <div key={index} className="score">{score}</div>)}
         </div>
