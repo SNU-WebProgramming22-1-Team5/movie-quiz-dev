@@ -63,9 +63,11 @@ function App() {
     }
 
     const setMyRank = () => {
-        getRank(Number(score)).then(result => {
-            setRank(result);
-        })
+        if (!user.isAnonymous) {
+            getRank(Number(score)).then(result => {
+                setRank(result);
+            })
+        }
     }
 
     const setMyQuiz = () => {
@@ -103,12 +105,12 @@ function App() {
                 <input type="submit" value="addScoreHistory" onClick={e => addScoreHistory(e,score)} />
             </form>
         </div>
-        <button onClick={e => googleLogin(e)}>Sign In with Google</button>
-        <button onClick={e => guestLogin(e)}>Play without Login</button>
+        <button onClick={e => googleLogin(e)}>googleLogin</button>
+        <button onClick={e => guestLogin(e)}>guestLogin</button>
         <button onClick={e => setScoreboard(e)}>getScoreboard</button>
         <button onClick={e => setMyRank(e)}>getRank</button>
         <button onClick={e => setMyQuiz(e)}>getQuiz</button>
-        {rank? <div id="rank">Your score is {rank}th!</div> : <div>No Data for Rank</div>}
+        {(user && user.isAnonymous)? <div id="rank">No Rank for Guest.</div> : rank? <div id="rank">Your score is {rank}th!</div> : <div>No Data for Rank</div>}
         <div id="scoreboard">
             {scores.map((obj,index) => { return <div className="score" key={index}>{index+1} : {obj['bestScore']} - {obj['email']} </div> })}
         </div>
