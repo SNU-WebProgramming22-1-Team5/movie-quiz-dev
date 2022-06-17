@@ -1,8 +1,15 @@
 // Import the functions you need from the SDKs you need
-import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, doc, getDoc, updateDoc, arrayUnion, setDoc } from 'firebase/firestore';
-import { getAuth, signInWithPopup, GoogleAuthProvider, signInAnonymously, updateProfile} from "firebase/auth";
-import { browserLocalPersistence, setPersistence } from "firebase/auth";
+import {initializeApp} from 'firebase/app';
+import {arrayUnion, doc, getDoc, getFirestore, setDoc, updateDoc} from 'firebase/firestore';
+import {
+    browserLocalPersistence,
+    getAuth,
+    GoogleAuthProvider,
+    setPersistence,
+    signInAnonymously,
+    signInWithPopup,
+    updateProfile
+} from "firebase/auth";
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -49,42 +56,77 @@ export const persistenceSet = () => {
     setPersistence(auth, browserLocalPersistence).catch(error => console.log(error));
 }
 
-//for writing game result score on firestore.
-export const addScore = async (user_id, name, score) => {
-    const docRef = doc(db,"userData",user_id)
+//for updating scores, bestScore, bestScoreDate on firestore userData DB.
+//arrayUnion() does not support to store duplicate elements on an array so following 'if' statements used.
+export const addScore = async (user_id, score) => {
+    const docRef = doc(db,"userData",user_id);
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()){
-        await updateDoc(docRef,{
-            scores: arrayUnion(score)
-        });
+        const pastScores = docSnap.data().scores;
+        if (pastScores && pastScores.includes(score)) {
+            const data = {
+                scores: [...pastScores, score]
+            };
+            await updateDoc(docRef, data);
+        } else {
+            const numberScoreArr = pastScores.map(str => Number(str));
+            const numberScore = Number(score);
+            if (pastScores && Math.max(...numberScoreArr) < numberScore) {
+                const curr = new Date();
+                const utc = curr.getTime() + (curr.getTimezoneOffset()*60*1000);
+                const kr_curr = new Date(utc+9*60*60*1000);
+                await updateDoc(docRef, {
+                    bestScore: score,
+                    bestScoreDate : kr_curr
+                });
+            }
+            await updateDoc(docRef,{
+                scores: arrayUnion(score)
+            })
+        }
     } else {
         console.log('No Document Record');
     }
-
 }
 
 // if there's no info on UserData with user's id, add new document with blank score history and email
-export const addUser = async (user_id,email,score=0) => {
+export const addUser = async (user_id,email) => {
     const docSnap = await getDoc(doc(db, "userData", user_id));
     if (!docSnap.exists()) {
         const data = {
             email : email,
-            scores : []
+            scores : [],
+            bestScore : 0,
+            bestScoreDate : ''
         }
         await setDoc(doc(db, "userData", user_id), data).catch(err => console.log(err))
     }
 }
 
 //for adding title data of a movie on movieData DB with random-gen id-named document
-export const addMovie = async (title1, title2, title3) => {
-    const docRef = doc(collection(db,"movieData"));
+export const addMovie = async (index,title1) => {
+    console.log('Added a movie.');
     const data = {
-        title1 : title1,
-        title2 : title2,
-        title3 : title3
+        title1 : title1
     }
-    await setDoc(docRef, data);
+    await setDoc(doc(db,"movieData", String(index)), data).catch(err => console.log(err));
 }
+
+// for getting 10 random unique numbers within movieData index.
+export const getRandomNumArray = (size=10, movieLength=86) => {
+    const arr = Array.from(Array(movieLength).keys());
+    function shuffleArray(array) {
+        for (let index = array.length - 1; index > 0; index--) {
+            const randomPosition = Math.floor(Math.random() * (index + 1));
+            const temporary = array[index];
+            array[index] = array[randomPosition];
+            array[randomPosition] = temporary;
+        }
+    }
+    shuffleArray(arr);
+    return arr.slice(0,size);
+}
+
 
 //for getting top 10 scores and username info from db. (scoreboard info)
 export const getScoreboard = async () => {
@@ -96,10 +138,11 @@ export const getRank = () => {
 
 }
 
-//for getting 10 movies data for quiz.
+//for getting 10 movies data from movieData for quiz.
 export const getQuiz = () => {
 
 }
+
 export { db, auth };
 
 
