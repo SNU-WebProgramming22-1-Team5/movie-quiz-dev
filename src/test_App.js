@@ -51,6 +51,7 @@ function App() {
         }
     }
 
+    // ** ToDo - move this part to persistenceSet() right before login
     //When page is loaded, account persistence option will be set.
     useEffect( () => {
         persistenceSet();
