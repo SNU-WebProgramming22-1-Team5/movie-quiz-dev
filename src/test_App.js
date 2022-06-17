@@ -15,7 +15,6 @@ import {
 
 } from "./firebase.js";
 
-
 function App() {
 
     const [user, setUser] = useState(null);
@@ -56,12 +55,15 @@ function App() {
         }).catch(error => console.log(error));
     }
 
+    //get top 10 best score histories
     const setScoreboard = () => {
         getScoreboard().then(result => {
             setScores(result);
+
         })
     }
 
+    //get my rank on entire best scores. this function does not add rank to scoreboard
     const setMyRank = () => {
         if (!user.isAnonymous) {
             getRank(Number(score)).then(result => {
@@ -70,11 +72,13 @@ function App() {
         }
     }
 
+    //get random 10 movie titles from db
     const setMyQuiz = () => {
         getQuiz(getRandomNumArray()).then(result => {
             setQuiz(result);
         })
     }
+
     //Under construction - Don't know if condition is correct for this, will check.
     //Whenever auth state is changed(login/logout), set user value to current user.
     //If its display name is null or user is anonymous, update user's display name to 'Guest' and do setUser.
@@ -86,6 +90,11 @@ function App() {
         } else {
             setUser(currentUser);
         }
+    }
+
+    //convert firestore timestamp to localestring
+    const dateToString = (timestamp) => {
+        return timestamp.toDate().toLocaleString('ko-KR');
     }
 
     //Whenever auth state is changed, onAuthStateChanged will execute once.
@@ -108,11 +117,11 @@ function App() {
         <button onClick={e => googleLogin(e)}>googleLogin</button>
         <button onClick={e => guestLogin(e)}>guestLogin</button>
         <button onClick={e => setScoreboard(e)}>getScoreboard</button>
-        <button onClick={e => setMyRank(e)}>getRank</button>
+        <button onClick={e => setMyRank(e)}>getRank(use before getScoreboard)</button>
         <button onClick={e => setMyQuiz(e)}>getQuiz</button>
         {(user && user.isAnonymous)? <div id="rank">No Rank for Guest.</div> : rank? <div id="rank">Your score is {rank}th!</div> : <div>No Data for Rank</div>}
         <div id="scoreboard">
-            {scores.map((obj,index) => { return <div className="score" key={index}>{index+1} : {obj['bestScore']} - {obj['email']} </div> })}
+            {scores.map((obj,index) => { return <div className="score" key={index}>{index+1} : {obj['bestScore']} by {obj['email']} at {dateToString(obj['bestScoreDate'])} </div> })}
         </div>
         <div id="quiz">
             {quiz.map((obj,index) => {return <div className="a-quiz" key={index}>{index+1} > {obj} </div> })}
