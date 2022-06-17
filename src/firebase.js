@@ -1,6 +1,16 @@
 // Import the functions you need from the SDKs you need
 import {initializeApp} from 'firebase/app';
-import {arrayUnion, doc, getDoc, getFirestore, setDoc, updateDoc} from 'firebase/firestore';
+import {
+    getFirestore,
+    arrayUnion,
+    doc,
+    collection,
+    getDoc,
+    getDocs,
+    setDoc,
+    addDoc,
+    updateDoc,
+} from 'firebase/firestore';
 import {
     browserLocalPersistence,
     getAuth,
@@ -103,18 +113,44 @@ export const addUser = async (user_id,email) => {
     }
 }
 
-//for adding title data of a movie on movieData DB with random-gen id-named document
-export const addMovie = async (index,title1) => {
-    console.log('Added a movie.');
-    const data = {
-        title1 : title1
+//for getting top 10 scores and username info from userData DB's bestScore. if same, earlier one comes first.
+//return an array of 10 objects {email, bestScore, bestScoreDate}
+export const getScoreboard = async (size=10) => {
+    const querySnap = await getDocs(collection(db,"userData"));
+    let userScores = [];
+    querySnap.forEach(doc => {
+        userScores.push({email: doc.data().email, bestScore: Number(doc.data().bestScore), bestScoreDate: doc.data().bestScoreDate})
+    })
+    const compare = (a,b) => {
+        if (b['bestScore']-a['bestScore'] === 0) {
+            return a['bestScoreDate']-b['bestScoreDate'];
+        } else {
+            return b['bestScore']-a['bestScore']
+        }
     }
-    await setDoc(doc(db,"movieData", String(index)), data).catch(err => console.log(err));
+    return userScores.sort(compare).slice(0,size);
+}
+
+//for calculating rank of game result. guest doesn't get rank.
+export const getRank = async (score) => {
+    const querySnap = await getDocs(collection(db,"userData"));
+    let userScores = [];
+    querySnap.forEach(doc => {
+        userScores.push(Number(doc.data().bestScore));
+    })
+    userScores = [...userScores, score];
+    userScores.sort((a,b) =>{ return (a-b) });
+    return userScores.length-userScores.indexOf(score);
+
 }
 
 // for getting 10 random unique numbers within movieData index.
-export const getRandomNumArray = (size=10, movieLength=86) => {
-    const arr = Array.from(Array(movieLength).keys());
+export const getRandomNumArray = (size=10) => {
+    //const querySnap = await getDocs(collection(db,"movieData"));
+    //get movieDB Length each time is cost inefficient.
+    //set this fixed or add var to db which is +1 each time you add movie to db.
+    const moviesLength = 86;
+    const arr = Array.from(Array(moviesLength).keys());
     function shuffleArray(array) {
         for (let index = array.length - 1; index > 0; index--) {
             const randomPosition = Math.floor(Math.random() * (index + 1));
@@ -127,20 +163,45 @@ export const getRandomNumArray = (size=10, movieLength=86) => {
     return arr.slice(0,size);
 }
 
-
-//for getting top 10 scores and username info from db. (scoreboard info)
-export const getScoreboard = async () => {
-
+//for getting movies data from movieData for quiz. return an array of string(title)
+export const getQuiz = async (indexArr) => {
+    let movies = [];
+    for (const index of indexArr) {
+        const docRef = doc(db, "movieData", String(index));
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+            movies.push(docSnap.data()["title1"]);
+        }
+    }
+    return movies;
 }
 
-//for getting rank of game result. guest doesn't get rank.
-export const getRank = () => {
 
+
+// functions below are for test
+
+//for adding random accounts to userData
+export const addUnknownUser = async () => {
+    const curr = new Date();
+    const utc = curr.getTime() + (curr.getTimezoneOffset()*60*1000);
+    const kr_curr = new Date(utc+9*60*60*1000);
+    const data = {
+        email : 'unknown@gmail.com',
+        scores : [0],
+        bestScore : 0,
+        bestScoreDate : kr_curr,
+    }
+    await addDoc(collection(db,"userData"),data);
 }
 
-//for getting 10 movies data from movieData for quiz.
-export const getQuiz = () => {
-
+//DO NOT USE if you don't want to add more data to db.
+//for adding title data of a movie on movieData DB with random-gen id-named document
+export const addMovie = async (index,title1) => {
+    console.log('Added a movie.');
+    const data = {
+        title1 : title1
+    }
+    await setDoc(doc(db,"movieData", String(index)), data).catch(err => console.log(err));
 }
 
 export { db, auth };
