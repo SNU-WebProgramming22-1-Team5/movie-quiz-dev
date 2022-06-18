@@ -13,6 +13,7 @@ import {
     getRandomNumArray,
     getQuiz,
     getUser,
+    addUnknownUser,
 
 } from "./firebase.js";
 
@@ -102,7 +103,10 @@ function App() {
 
     //convert firestore timestamp to localestring
     const dateToString = (timestamp) => {
-        return timestamp.toDate().toLocaleString('ko-KR');
+        if (timestamp) {
+            return timestamp.toDate().toLocaleString('ko-KR');
+        }
+        return 'No Time Record';
     }
 
     //Whenever auth state is changed, onAuthStateChanged will execute once.
@@ -128,6 +132,7 @@ function App() {
         <button onClick={e => setMyRank(e)}>getRank(use before getScoreboard)</button>
         <button onClick={e => setMyQuiz(e)}>getQuiz</button>
         <button onClick={e => userGet(e)}>getUser</button>
+        <button onClick={e => addUnknownUser()}>addUnknownUser</button>
         {(user && user.isAnonymous)? <div id="rank">No Rank for Guest.</div> : rank? <div id="rank">Your score is {rank}th!</div> : <div>No Data for Rank</div>}
         <div id="scoreboard">
             {scores.map((obj,index) => { return <div className="score" key={index}>{index+1} : {obj['bestScore']} by {obj['email']} at {dateToString(obj['bestScoreDate'])} </div> })}
