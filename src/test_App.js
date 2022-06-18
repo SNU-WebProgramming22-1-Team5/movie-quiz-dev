@@ -12,6 +12,7 @@ import {
     getRank,
     getRandomNumArray,
     getQuiz,
+    getUser,
 
 } from "./firebase.js";
 
@@ -79,6 +80,13 @@ function App() {
         })
     }
 
+    const userGet = () => {
+        getUser(user.uid).then(result => {
+            console.log(result);
+        }).catch(err => {console.log(err)})
+        //getUser('WrpQWv64tYNyTUAMlP7cYnYhLqB2').catch(err => {console.log(err)})
+    }
+
     //Under construction - Don't know if condition is correct for this, will check.
     //Whenever auth state is changed(login/logout), set user value to current user.
     //If its display name is null or user is anonymous, update user's display name to 'Guest' and do setUser.
@@ -119,6 +127,7 @@ function App() {
         <button onClick={e => setScoreboard(e)}>getScoreboard</button>
         <button onClick={e => setMyRank(e)}>getRank(use before getScoreboard)</button>
         <button onClick={e => setMyQuiz(e)}>getQuiz</button>
+        <button onClick={e => userGet(e)}>getUser</button>
         {(user && user.isAnonymous)? <div id="rank">No Rank for Guest.</div> : rank? <div id="rank">Your score is {rank}th!</div> : <div>No Data for Rank</div>}
         <div id="scoreboard">
             {scores.map((obj,index) => { return <div className="score" key={index}>{index+1} : {obj['bestScore']} by {obj['email']} at {dateToString(obj['bestScoreDate'])} </div> })}
