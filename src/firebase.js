@@ -176,9 +176,16 @@ export const getQuiz = async (indexArr) => {
     return movies;
 }
 
+// functions below are for development
 
 
-// functions below are for test
+//user_id로 userData 받아오기
+export const getUser = async (user_id) => {
+    const docRef = doc(db, "userData", user_id)
+    const docSnap = await getDoc(docRef);
+    return docSnap.data();
+}
+
 
 //for adding random accounts to userData
 export const addUnknownUser = async () => {
