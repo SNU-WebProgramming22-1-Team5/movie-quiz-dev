@@ -1,10 +1,11 @@
-import React,{useState} from 'react'
+import React,{useEffect, useState} from 'react'
 import styled from 'styled-components'
 import BottomBox from './BottomBox'
 import AppBar from './AppBar'
 import Button from './Button'
 import Score from './Score'
 
+const translate = require('../Api');
 const Wrap=styled.div`
 
 `;
@@ -49,15 +50,17 @@ const AnswerWrap=styled.div`
 `
 
 function Problem() {
-  const hint='의심을 하다';
   const answer='용의자';
   const english='suspect';
   const num = [...answer]
   const [text,setText]=useState('')
   const [result,setResult]=useState('')
+  const [hint, setHint]=useState('')
+
   const onChange=(e)=>{
     setText(e.target.value)
   }
+
   const onSubmit=(e)=>{
     if(text){
       if(answer===text){
@@ -68,12 +71,22 @@ function Problem() {
       setText('')
     }
   }
+
   const onKeyPress=(e)=>{
     if(e.key==='Enter'){
       onSubmit();
     }
-
   }
+
+  async function getHint(query) {
+    const translated = await translate(query);
+    setHint(translated);
+  }
+
+  useEffect(() => {
+    getHint(answer);
+}, []);
+
   return (
     <Wrap>
       <AppBar></AppBar>
