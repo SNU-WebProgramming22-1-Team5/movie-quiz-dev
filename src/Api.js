@@ -11,7 +11,7 @@ async function papago(query, sourceLang, targetLang) {
     });
 
     const config = {
-        baseURL: 'https://openapi.naver.com/v1/',
+        baseURL: 'https://cors-anywhere.herokuapp.com/https://openapi.naver.com/v1/',
         headers: {
             'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
             'x-naver-client-id': 'pH1cA6qBWOfU2mx_OjVh',
@@ -37,15 +37,4 @@ async function translate(query) {
     return entoko;
 }
 
-module.exports = {
-    translate,
-    translateKor,
-    translateEn,
-};
-
-// test function
-// async function main() {
-//     const transQuery = await translate('비긴 어게인');
-//     console.log(transQuery);
-// }
-//  main();
+module.exports = translate;
