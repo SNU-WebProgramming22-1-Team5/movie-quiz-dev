@@ -66,8 +66,7 @@ export const persistenceSet = () => {
     setPersistence(auth, browserLocalPersistence).catch(error => console.log(error));
 }
 
-//for updating scores, bestScore, bestScoreDate on firestore userData DB.
-//arrayUnion() does not support to store duplicate elements on an array so following 'if' statements used.
+//for writing game result score on firestore.
 export const addScore = async (user_id, score) => {
     const docRef = doc(db,"userData",user_id);
     const docSnap = await getDoc(docRef);
@@ -98,7 +97,6 @@ export const addScore = async (user_id, score) => {
         console.log('No Document Record');
     }
 }
-
 // if there's no info on UserData with user's id, add new document with blank score history and email
 export const addUser = async (user_id,email) => {
     const docSnap = await getDoc(doc(db, "userData", user_id));
@@ -115,7 +113,7 @@ export const addUser = async (user_id,email) => {
 
 //for getting top 10 scores and username info from userData DB's bestScore. if same, earlier one comes first.
 //return an array of 10 objects {email, bestScore, bestScoreDate}
-export const getScoreboard = async (size=10) => {
+export const getScoreboard = async (size=7) => {
     const querySnap = await getDocs(collection(db,"userData"));
     let userScores = [];
     querySnap.forEach(doc => {
@@ -132,15 +130,18 @@ export const getScoreboard = async (size=10) => {
 }
 
 //for calculating rank of game result. guest doesn't get rank.
-export const getRank = async (score) => {
+export const getRank = async (user_id) => {
+    const docRef=doc(db,"userData",user_id)
+    const docSnap=await(getDoc(docRef))
+    const bestScore=docSnap.data().bestScore
     const querySnap = await getDocs(collection(db,"userData"));
     let userScores = [];
     querySnap.forEach(doc => {
         userScores.push(Number(doc.data().bestScore));
     })
-    userScores = [...userScores, score];
     userScores.sort((a,b) =>{ return (a-b) });
-    return userScores.length-userScores.indexOf(score);
+    console.log(userScores)
+    return userScores.length-userScores.indexOf(parseInt(bestScore));
 
 }
 
@@ -176,16 +177,9 @@ export const getQuiz = async (indexArr) => {
     return movies;
 }
 
-// functions below are for development
 
 
-//user_id로 userData 받아오기
-export const getUser = async (user_id) => {
-    const docRef = doc(db, "userData", user_id)
-    const docSnap = await getDoc(docRef);
-    return docSnap.data();
-}
-
+// functions below are for test
 
 //for adding random accounts to userData
 export const addUnknownUser = async () => {
@@ -211,6 +205,11 @@ export const addMovie = async (index,title1) => {
     await setDoc(doc(db,"movieData", String(index)), data).catch(err => console.log(err));
 }
 
+//user_id로 user data 받아오기
+export const getUser=async(user_id)=>{
+    const docRef=doc(db,"userData",user_id)
+    const docSnap=await(getDoc(docRef))
+    return docSnap.data();
+}
+
 export { db, auth };
-
-

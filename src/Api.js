@@ -23,12 +23,12 @@ async function papago(query, sourceLang, targetLang) {
     return response.data.message.result.translatedText;
 }
 // korean -> english
-const translateKor = (query) => {
-    return papago(query, 'ko', 'en');
+const translateKor = async(query) => {
+    return await papago(query, 'ko', 'en');
 }
 // english -> korean
-const translateEn = (query) => {
-    return papago(query, 'en', 'ko');
+const translateEn = async(query) => {
+    return await papago(query, 'en', 'ko');
 }
 
 async function translate(query) {
@@ -36,5 +36,5 @@ async function translate(query) {
     const entoko = await translateEn(kotoen);
     return entoko;
 }
+module.exports={translate:translate,translateKor:translateKor};
 
-module.exports = translate;
