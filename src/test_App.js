@@ -156,7 +156,7 @@ function App() {
         <button onClick={e => guestLogin(e)}>guestLogin</button>
         <button onClick={e => setScoreboard(e)}>getScoreboard</button>
         <button onClick={e => setExpScoreboard(e)}>getExpScoreboard</button>
-        <button onClick={e => setMyRank(e)}>getRank(use before getScoreboard)</button>
+        <button onClick={e => setMyRank(e)}>getRank(use before Submit)</button>
         <button onClick={e => setMyExpRank(e)}>getExpRank</button>
         <button onClick={e => setMyQuiz(e)}>getQuiz</button>
         <button onClick={e => userDataGet(e)}>getUserData</button>
@@ -181,4 +181,5 @@ function App() {
 
 
 export default App;
+
 
