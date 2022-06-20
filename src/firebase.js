@@ -51,7 +51,8 @@ export const addUser = async (user_id,email) => {
             EXP : 0,
             scores : [],
             bestScore : 0,
-            bestScoreDate : ''
+            bestScoreDate : '',
+            recentScoreDate : ''
         }
         await setDoc(doc(db, "userData", user_id), data).catch(err => console.log(err))
     }
@@ -79,29 +80,35 @@ export const persistenceSet = () => {
 //for updating scores, bestScore, bestScoreDate on firestore userData DB.
 //arrayUnion() does not support to store duplicate elements on an array so following 'if' statements used.
 export const addScoreHistory = async (user_id, score) => {
+
+    const curr = new Date();
+    const utc = curr.getTime() + (curr.getTimezoneOffset()*60*1000);
+    const kr_curr = new Date(utc+9*60*60*1000);
+
     const docRef = doc(db,"userData",user_id);
     const docSnap = await getDoc(docRef);
+
     if (docSnap.exists()){
+
         const pastScores = docSnap.data().scores;
         if (pastScores && pastScores.includes(score)) {
             const data = {
-                scores: [...pastScores, score]
+                scores: [...pastScores, score],
+                recentScoreDate: kr_curr
             };
             await updateDoc(docRef, data);
         } else {
             const numberScoreArr = pastScores.map(str => Number(str));
             const numberScore = Number(score);
             if (pastScores && Math.max(...numberScoreArr) < numberScore) {
-                const curr = new Date();
-                const utc = curr.getTime() + (curr.getTimezoneOffset()*60*1000);
-                const kr_curr = new Date(utc+9*60*60*1000);
                 await updateDoc(docRef, {
                     bestScore: score,
                     bestScoreDate : kr_curr
                 });
             }
             await updateDoc(docRef,{
-                scores: arrayUnion(score)
+                scores: arrayUnion(score),
+                recentScoreDate: kr_curr
             })
         }
     } else {
@@ -252,6 +259,7 @@ export const addUnknownUser = async () => {
         scores : ['10'],
         bestScore : 10,
         bestScoreDate : kr_curr,
+        recentScoreDate : kr_curr,
     }
     await addDoc(collection(db,"userData"),data);
 }
@@ -269,4 +277,3 @@ export const addMovie = async (index,title_ans,title_eng,title_hint) => {
 }
 
 export { db, auth };
-
