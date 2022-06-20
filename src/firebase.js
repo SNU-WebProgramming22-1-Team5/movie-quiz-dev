@@ -149,10 +149,7 @@ export const getScoreboard = async (size=10) => {
     return userScores.sort(compare).slice(0,size);
 }
 
-
-//currently Working... -> when same EXP met, how can I sort them reasonably?
-
-//for getting top 10 scores and username info from userData DB's EXP. if same, user with earlier BestScoreDate comes first.
+//for getting top 10 scores and username info from userData DB's EXP. if same, user with earlier recentScoreDate comes first.
 //return an array of 10 objects {email, EXP}
 export const getExpScoreboard = async (size=10) => {
     const querySnap = await getDocs(collection(db,"userData"));
@@ -166,7 +163,7 @@ export const getExpScoreboard = async (size=10) => {
     }
     const compare = (a,b) => {
         if (b['EXP']-a['EXP'] === 0) {
-            return a['bestScoreDate']-b['bestScoreDate'];
+            return a['recentScoreDate']-b['recentScoreDate'];
         } else {
             return b['EXP']-a['EXP'];
         }
@@ -277,3 +274,4 @@ export const addMovie = async (index,title_ans,title_eng,title_hint) => {
 }
 
 export { db, auth };
+
