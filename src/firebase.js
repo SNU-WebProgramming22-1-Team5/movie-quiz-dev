@@ -79,8 +79,9 @@ export const persistenceSet = () => {
 
 //for updating scores, bestScore, bestScoreDate on firestore userData DB.
 //arrayUnion() does not support to store duplicate elements on an array so following 'if' statements used.
-export const addScoreHistory = async (user_id, score) => {
+export const addScoreHistory = async (user_id, correct, time=0) => {
 
+    const score = 50*correct + time;
     const curr = new Date();
     const utc = curr.getTime() + (curr.getTimezoneOffset()*60*1000);
     const kr_curr = new Date(utc+9*60*60*1000);
@@ -252,9 +253,9 @@ export const addUnknownUser = async () => {
     const kr_curr = new Date(utc+9*60*60*1000);
     const data = {
         email : 'unknown@gmail.com',
-        EXP : 10,
-        scores : ['10'],
-        bestScore : 10,
+        EXP : 0,
+        scores : [0],
+        bestScore : 0,
         bestScoreDate : kr_curr,
         recentScoreDate : kr_curr,
     }
@@ -274,4 +275,6 @@ export const addMovie = async (index,title_ans,title_eng,title_hint) => {
 }
 
 export { db, auth };
+
+
 
