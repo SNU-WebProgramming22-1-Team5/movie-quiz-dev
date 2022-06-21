@@ -1,5 +1,5 @@
-import React from 'react'
-import styled from 'styled-components'
+import React from 'react';
+import styled from 'styled-components';
 
 const Box=styled.div`
   background-color:#F0F0F0;
@@ -12,7 +12,7 @@ const Box=styled.div`
   .mypage{
     min-height:300px;
   }
-`
+`;
 
 export default function BottomBox(props) {
   return (

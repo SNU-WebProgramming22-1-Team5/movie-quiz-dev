@@ -1,5 +1,5 @@
-import React from 'react'
-import styled from 'styled-components'
+import React from 'react';
+import styled from 'styled-components';
 
 const Div=styled.div`
   background-color:white;
@@ -10,8 +10,7 @@ const Div=styled.div`
     padding:15px;
     width:100%;
   }
-
-`
+`;
 function Box(props) {
   return (
     <Div><div>{props.children}</div></Div>

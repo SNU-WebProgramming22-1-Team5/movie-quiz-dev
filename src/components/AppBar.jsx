@@ -1,7 +1,7 @@
-import React,{useState} from 'react'
-import styled from 'styled-components'
-import {NavLink,Link} from "react-router-dom"
-import RuleModal from './RuleModal'
+import React,{useState} from 'react';
+import styled from 'styled-components';
+import {NavLink,Link} from "react-router-dom";
+import RuleModal from './RuleModal';
 
 const Bar=styled.div`
   height:90px;
@@ -15,7 +15,7 @@ const Bar=styled.div`
     top:36px;
     left:30px;
   }
-  div:nth-child(2){
+  div.title{
     text-align:center;
     font-weight: 700;
     font-size: 25px;
@@ -28,21 +28,32 @@ const Bar=styled.div`
     top:36px;
     right:30px;
   }
-`
+`;
+
 export default function AppBar() {
-  const [show,setShow]=useState('')
+  //modal창 관리를 위한 state
+  const [show,setShow]=useState('');
+
+  //모달창 보여주기
   const handleShow=()=>{
     setShow('show')  
-  }
+  };
+
+  //모달창 지우기
   const handleDelete=()=>{
     setShow('') 
-  }
+  };
+
   return (
     <>
       <RuleModal onClick={()=>handleDelete()} show={show}></RuleModal>
       <Bar>
         <img onClick={handleShow} className="rule" alt="rule" src={process.env.PUBLIC_URL +'/img/rule.png'}></img>
-        <div><NavLink style={{textDecoration:'none',color:'white'}} to='/Home'>Movie Quiz</NavLink></div>
+        <div className='title'>
+          <NavLink style={{textDecoration:'none',color:'white'}} to='/Home'>
+            Movie Quiz
+          </NavLink>
+        </div>
         <Link to='/Mypage'><img className='mypage' alt="mypage" src={process.env.PUBLIC_URL +'/img/mypage.png'}></img></Link>
       </Bar>
     </>
