@@ -5,7 +5,7 @@ const Div=styled.div`
   background-color:white;
   color:black;
   width:100%;
-  border-radius:5px;
+  border-radius:10px;
   div{
     padding:15px;
     width:100%;

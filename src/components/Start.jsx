@@ -1,6 +1,8 @@
-import React from 'react'
+import React, { useEffect,useState } from 'react'
 import styled from 'styled-components'
 import {NavLink} from "react-router-dom"
+import { useNavigate } from 'react-router-dom'
+
 
 const Wrab=styled.div`
   max-width:420px;
@@ -10,7 +12,7 @@ const Wrab=styled.div`
   margin:0 auto;
   position:relative;
   color:white;
-  min-height:900px;
+  height:100vh;
 `
 const Title=styled.div`
   font-weight: 700;
@@ -55,17 +57,53 @@ const Login=styled.div`
     transform:translate(-50%,-50%);
     text-align:center;
   }
+  .blur{
+    font-size:16px;
+    width:100%;
+    -webkit-filter: blur(2px);
+    filter: blur(2px);
+  }
+  .notblur{
+    font-size:16px;
+    width:100%;
+    -webkit-transition: .3s ease-in-out;
+    transition: .3s ease-in-out;
+    -webkit-filter: blur(0);
+    filter: blur(0);
+  }
 `
 export default function Start(props) {
+  const user=props.user;
   const googleLogin=props.googleLogin
+  const navigate=useNavigate();
+  const [fadeout,setFadeout]=useState(false)
+  
+  useEffect(()=>{
+    if(user){
+      setTimeout(()=>{
+        setFadeout("true")
+      },700)
+      setTimeout(()=>{
+        navigate("/Home") 
+      },2000)
 
+    }
+  },[user,navigate])
   return (
     <Wrab>
       <Title>Movie Quiz</Title>
       <Sub>영화 게임 맞추기에 도전하시겠습니까?</Sub>
       <Login>
-        <img alt="GoogleLogin" src='/img/GoogleLogin.png' onClick={googleLogin}></img>
+        {user?
+        <>
+        <div className={fadeout?'notblur':'blur'}>{user.email.split("@")[0]}님, 환영합니다</div>
+        </>
+        :
+        <>
+        <img alt="GoogleLogin" src={process.env.PUBLIC_URL+'/img/GoogleLogin.png'} onClick={googleLogin}></img>
         <div><NavLink style={{color:'white'}} to='/Home'>로그인없이 하러가기</NavLink></div>
+        </>
+        }
       </Login>
     </Wrab>
   )

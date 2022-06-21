@@ -64,9 +64,9 @@ export const loginGuest = () => {
 }
 
 //for setting a user's displayName. used at adding displayname for guest users
-export const renameUser = (name,user=auth.currentUser) => {
+export const renameUser = async(name,user=auth.currentUser) => {
     if (user) {
-        return updateProfile(user, {displayName: name}).catch(error => console.log(error));
+        return await updateProfile(user, {displayName: name}).catch(error => console.log(error));
     } else {
         return null;
     }
@@ -79,9 +79,9 @@ export const persistenceSet = () => {
 
 //for updating scores, bestScore, bestScoreDate on firestore userData DB.
 //arrayUnion() does not support to store duplicate elements on an array so following 'if' statements used.
-export const addScoreHistory = async (user_id, correct, time=0) => {
+export const addScoreHistory = async (user_id, correct,time) => {
 
-    const score = 50*correct + time;
+    const score=parseInt(50*correct)+parseInt(time);
     const curr = new Date();
     const utc = curr.getTime() + (curr.getTimezoneOffset()*60*1000);
     const kr_curr = new Date(utc+9*60*60*1000);
@@ -92,28 +92,24 @@ export const addScoreHistory = async (user_id, correct, time=0) => {
     if (docSnap.exists()){
 
         const pastScores = docSnap.data().scores;
-        if (pastScores && pastScores.includes(score)) {
-            const data = {
-                scores: [...pastScores, score],
-                recentScoreDate: kr_curr
-            };
-            await updateDoc(docRef, data);
-        } else {
-            const numberScoreArr = pastScores.map(str => Number(str));
-            const numberScore = Number(score);
-            if (pastScores && Math.max(...numberScoreArr) < numberScore) {
-                await updateDoc(docRef, {
-                    bestScore: score,
-                    bestScoreDate : kr_curr
-                });
-            }
-            await updateDoc(docRef,{
-                scores: arrayUnion(score),
-                recentScoreDate: kr_curr
-            })
+        const data = {
+            scores: [...pastScores, score],
+            recentScoreDate: kr_curr
+        };
+        await updateDoc(docRef, data);
+        const numberScoreArr = pastScores.map(str => Number(str));
+        const numberScore = Number(score);
+        if (pastScores && Math.max(...numberScoreArr) < numberScore) {
+            await updateDoc(docRef, {
+                bestScore: score,
+                bestScoreDate : kr_curr
+            });
         }
-    } else {
-        alert('No Document Record!');
+        await updateDoc(docRef,{
+            scores: arrayUnion(score),
+            recentScoreDate: kr_curr
+    })
+        
     }
 }
 
@@ -150,7 +146,10 @@ export const getScoreboard = async (size=10) => {
     return userScores.sort(compare).slice(0,size);
 }
 
-//for getting top 10 scores and username info from userData DB's EXP. if same, user with earlier recentScoreDate comes first.
+
+//currently Working... -> when same EXP met, how can I sort them reasonably?
+
+//for getting top 10 scores and username info from userData DB's EXP. if same, user with earlier BestScoreDate comes first.
 //return an array of 10 objects {email, EXP}
 export const getExpScoreboard = async (size=10) => {
     const querySnap = await getDocs(collection(db,"userData"));
@@ -164,7 +163,7 @@ export const getExpScoreboard = async (size=10) => {
     }
     const compare = (a,b) => {
         if (b['EXP']-a['EXP'] === 0) {
-            return a['recentScoreDate']-b['recentScoreDate'];
+            return a['bestScoreDate']-b['bestScoreDate'];
         } else {
             return b['EXP']-a['EXP'];
         }
@@ -174,15 +173,19 @@ export const getExpScoreboard = async (size=10) => {
 }
 
 //for calculating rank of game result. guest doesn't get rank.
-export const getRank = async (score) => {
+export const getRank = async (user_id) => {
+    const docRef=doc(db,"userData",user_id)
+    const docSnap=await(getDoc(docRef))
+    const bestScore=docSnap.data().bestScore
     const querySnap = await getDocs(collection(db,"userData"));
     let userScores = [];
     querySnap.forEach(doc => {
         userScores.push(Number(doc.data().bestScore));
     })
-    userScores = [...userScores, score];
     userScores.sort((a,b) =>{ return (a-b) });
-    return userScores.length-userScores.indexOf(score);
+    console.log(userScores)
+    return userScores.length-userScores.indexOf(parseInt(bestScore));
+
 }
 
 export const getExpRank = async (user_id) => {
@@ -192,7 +195,7 @@ export const getExpRank = async (user_id) => {
     const docRef = doc(db,"userData",user_id);
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
-         exp = docSnap.data().EXP;
+        exp = docSnap.data().EXP;
     }
     const querySnap = await getDocs(collection(db,"userData"));
     querySnap.forEach(doc => {
@@ -253,9 +256,9 @@ export const addUnknownUser = async () => {
     const kr_curr = new Date(utc+9*60*60*1000);
     const data = {
         email : 'unknown@gmail.com',
-        EXP : 0,
-        scores : [0],
-        bestScore : 0,
+        EXP : 10,
+        scores : ['10'],
+        bestScore : 10,
         bestScoreDate : kr_curr,
         recentScoreDate : kr_curr,
     }
@@ -274,7 +277,11 @@ export const addMovie = async (index,title_ans,title_eng,title_hint) => {
     await setDoc(doc(db,"movieData", String(index)), data).catch(err => console.log(err));
 }
 
+
+
 export { db, auth };
+//DO NOT USE if you don't want to add more data to db.
+//for adding title data of a movie on movieData DB with random-gen id-named document
 
 
 
