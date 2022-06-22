@@ -19,16 +19,16 @@ https://mi-gongan.github.io/movie_quiz/Home
 
 빠르게 풀수록, 많이 맞출수록 고득점이 가능합니다.
 
-============================================
-## Functions & Pages
 
-- /Home
+### Functions & Pages
+
+- /Home :
  구글 로그인 후, 전체 최고득점 랭킹과 경험치 랭킹 스코어보드를 볼 수 있습니다.
 
-- /MyPage
+- /MyPage :
  본인의 점수 기록, 현재 순위, 경험치/레벨을 확인 할 수 있습니다.
  
-============================================
+ 
 ### What used for this
 - React for front-end
 - Firestore for back-end
