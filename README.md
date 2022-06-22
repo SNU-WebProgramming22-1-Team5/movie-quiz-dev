@@ -22,14 +22,21 @@ https://mi-gongan.github.io/movie_quiz/Home
 
 ### Functions & Pages
 
-- /Home :
+![image](https://user-images.githubusercontent.com/33277896/174987927-a547c0db-6d00-4344-baa2-f5407f37923b.png)
+ - /Home :
  구글 로그인 후, 전체 최고득점 랭킹과 경험치 랭킹 스코어보드를 볼 수 있습니다.
 
-- /MyPage :
+![image](https://user-images.githubusercontent.com/33277896/174988006-aae60d26-6d5f-438a-a5e3-18ac79fa46d4.png)
+ - /MyPage :
  본인의 점수 기록, 현재 순위, 경험치/레벨을 확인 할 수 있습니다.
+
+![image](https://user-images.githubusercontent.com/33277896/174988158-a220bf45-6df1-4109-82bf-07025d798c0f.png)
+ - /Quiz :
+ 힌트를 클릭하여 볼 수 있고 타이머와 문제를 푼 개수를 볼 수 있습니다.
  
- 
+
 ### What used for this
+
 - React for front-end
 - Firestore for back-end
 - Naver papago NMT api for translation
