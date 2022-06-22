@@ -25,7 +25,7 @@ https://mi-gongan.github.io/movie_quiz/Home
 
 
  - /Home :
- 구글 로그인 후, 전체 최고득점 랭킹과 경험치 랭킹 스코어보드를 볼 수 있습니다.
+ 구글 로그인 후, 전체 최고득점 랭킹과 경험치 랭킹 스코어보드를 볼 수 있습니다. 좌상단의 버튼으로 도움말을, 우상단의 버튼으로 MyPage를 볼 수 있습니다.
  
  
 ![image](https://user-images.githubusercontent.com/33277896/174987927-a547c0db-6d00-4344-baa2-f5407f37923b.png)
