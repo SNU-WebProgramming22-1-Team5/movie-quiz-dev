@@ -46,6 +46,12 @@ https://mi-gongan.github.io/movie_quiz/Home
 
  
  
+ - /Result :
+ 게임 결과창입니다. 맞춘 개수, 남은 시간, 최종 점수, 얻은 EXP를 볼 수 있습니다.
+ 
+ 
+ ![image](https://user-images.githubusercontent.com/33277896/174989530-3ce9b629-84b0-406f-8ef8-ab6ae2ee897f.png)
+
 ### What used for this
 
 - React for front-end
