@@ -6,6 +6,7 @@ https://mi-gongan.github.io/movie_quiz/Home
 
 
 ## Intro
+
 ![image](https://user-images.githubusercontent.com/33277896/174984948-3a0fa253-049b-48b1-8b4f-816a03a93f85.png)
 
 ![image](https://user-images.githubusercontent.com/33277896/174985018-c0706c75-987d-44b9-8a56-150b45f815c9.png)
@@ -22,18 +23,28 @@ https://mi-gongan.github.io/movie_quiz/Home
 
 ### Functions & Pages
 
+
  - /Home :
  구글 로그인 후, 전체 최고득점 랭킹과 경험치 랭킹 스코어보드를 볼 수 있습니다.
+ 
+ 
 ![image](https://user-images.githubusercontent.com/33277896/174987927-a547c0db-6d00-4344-baa2-f5407f37923b.png)
+
 
  - /MyPage :
  본인의 점수 기록, 현재 순위, 경험치/레벨을 확인 할 수 있습니다.
+ 
+ 
 ![image](https://user-images.githubusercontent.com/33277896/174988006-aae60d26-6d5f-438a-a5e3-18ac79fa46d4.png)
+
 
  - /Quiz :
  힌트를 클릭하여 볼 수 있고 타이머와 문제를 푼 개수를 볼 수 있습니다.
+ 
+ 
 ![image](https://user-images.githubusercontent.com/33277896/174988158-a220bf45-6df1-4109-82bf-07025d798c0f.png)
 
+ 
  
 ### What used for this
 
